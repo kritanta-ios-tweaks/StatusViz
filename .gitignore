@@ -1,0 +1,5 @@
+.dragon/
+.theos/
+Makefile
+packages/
+.DS_Store
