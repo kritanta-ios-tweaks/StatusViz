@@ -1,7 +1,7 @@
 Package: me.kritanta.statusviz
-Name: StatusViz
+Name: StatusVizRed
 Depends: mobilesubstrate, me.conorthedev.audiosnapshotserver, me.kritanta.libcozy, me.conorthedev.libmitsuha
-Version: 0.1.1
+Version: 0.1.1-red
 Architecture: iphoneos-arm
 Description: A visualizer for your status bar
 Depiction: https://repo.openpack.io/depictions?id=me.kritanta.statusviz
