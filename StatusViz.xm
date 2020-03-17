@@ -39,11 +39,11 @@ void updateBackwaves()
 	}
 	for (MSHBarView *bar in globalFrontBarViews)
 	{
-		[bar updateWaveColor:[f getColor] subwaveColor:[UIColor grayColor]];
+		[bar updateWaveColor:[UIColor colorWithRed:1.00 green:0.51 blue:0.51 alpha:1.0] subwaveColor:[UIColor grayColor]];
 	}
 	for (MSHBarView *bar in globalBackBarViews)
 	{
-		[bar updateWaveColor:[b getColor] subwaveColor:[UIColor grayColor]];
+		[bar updateWaveColor:[UIColor colorWithRed:0.83 green:0.13 blue:0.13 alpha:1.0] subwaveColor:[UIColor grayColor]];
 	}
 }
 @interface _UIStatusBarRegion : NSObject 
