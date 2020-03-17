@@ -8,7 +8,6 @@
 #import <Preferences/PSSpecifier.h>
 #import <UIKit/UIColor+Private.h>
 #import <UIKit/UIImage+Private.h>
-#import <version.h>
 
 @implementation KRLinkCell
 
@@ -50,7 +49,7 @@
 			_avatarView.backgroundColor = [UIColor colorWithWhite:0.9f alpha:1];
 			_avatarView.userInteractionEnabled = NO;
 			_avatarView.clipsToBounds = YES;
-			_avatarView.layer.cornerRadius = IS_IOS_OR_NEWER(iOS_7_0) ? size / 2 : 4.f;
+			_avatarView.layer.cornerRadius = 4.f;
 			_avatarView.layer.borderWidth = 2;
 			if (@available(iOS 13, *)) 
 			{

@@ -12,6 +12,7 @@
 #include "StatusViz.h"
 #include <Cozy/Cozy.h>
 
+
 static BOOL hideTime;
 static UIView *global_UIStatusBarForegroundView;
 static NSMutableArray *globalLeftAreas;
@@ -397,7 +398,7 @@ int connfd;
 -(id)init {
     id orig = %orig;
     NSLog(@"[ASSWatchdog] checking for ASS");
-    bool assPresent = [[NSFileManager defaultManager] fileExistsAtPath: @"/Library/MobileSubstrate/DynamicLibraries/AudioSnapshotServer.dylib"];
+    bool assPresent = [[NSFileManager defaultManager] fileExistsAtPath: @"/Library/MobileSubstrate/DynamicLibraries/ThickASS.dylib"];
     if (assPresent) {
         NSLog(@"[ASSWatchdog] ASS found... checking if msd is hooked");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

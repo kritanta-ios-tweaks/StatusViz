@@ -5,7 +5,7 @@ TWEAK_NAME="StatusViz"
 # Minimum iOS
 MINIOS="11.0"
 # Archs supported?
-ARCHS="arm64 arm64e"
+ARCHS="-arch arm64 -arch arm64e"
 # flags to pass to clang 
 CFLAGS="-I../libmitsuha/public"
 # What type of project is this? (Tweak | Library | Prefs | SubTweak)
@@ -15,7 +15,7 @@ LOGOS_FILE="StatusViz.xm"
 # Rest of the shit we need?
 TWEAK_FILES=""
 # What do we run over ssh after the deb has been installed?
-INSTALL_CMD="sbreload"
+INSTALL_CMD="killall -9 SpringBoard"
 # Libraries to link
 # libobjc and libc++ are included by default
 LIBS="-lmitsuha -lCozy"

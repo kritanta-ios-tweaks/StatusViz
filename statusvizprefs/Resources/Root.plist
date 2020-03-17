@@ -44,7 +44,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>StatusViz 0.1.0-alpha</string>
+			<string>StatusViz 0.1.1</string>
 			<key>footerText</key>
 			<string>In early stages and WILL have bugs! Report them to me!</string>
 			<key>isStaticText</key>

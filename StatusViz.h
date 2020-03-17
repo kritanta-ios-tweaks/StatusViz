@@ -1,4 +1,5 @@
 
+#define MSHBarView MSHBarView
 #include <Foundation/Foundation.h>
 #include <UIKit/UIKit.h>
 #include "MSHBarView.h"
