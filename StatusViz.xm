@@ -37,11 +37,11 @@ void updateBackwaves()
 		b = [schema tertiaryControlColor];
 		f = [schema tertiaryLabelColor];
 	}
-	for (MSHBarView *bar in globalFrontBarViews)
+	for (MSHFBarView *bar in globalFrontBarViews)
 	{
 		[bar updateWaveColor:[f getColor] subwaveColor:[UIColor grayColor]];
 	}
-	for (MSHBarView *bar in globalBackBarViews)
+	for (MSHFBarView *bar in globalBackBarViews)
 	{
 		[bar updateWaveColor:[b getColor] subwaveColor:[UIColor grayColor]];
 	}
@@ -82,10 +82,10 @@ void showLeftStatusBarRegions()
 %hook _UIStatusBarForegroundView 
 
 %property (nonatomic, assign) BOOL kek;
-%property (nonatomic, retain) MSHBarView *mshView;
-%property (nonatomic, retain) MSHBarView *mshShitHackView;
-%property (nonatomic, retain) MSHBarView *mshBackView;
-%property (nonatomic, retain) MSHBarView *mshBackTwoView;
+%property (nonatomic, retain) MSHFBarView *mshFView;
+%property (nonatomic, retain) MSHFBarView *mshShitHackView;
+%property (nonatomic, retain) MSHFBarView *mshBackView;
+%property (nonatomic, retain) MSHFBarView *mshBackTwoView;
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
@@ -97,29 +97,29 @@ void showLeftStatusBarRegions()
 	global_UIStatusBarForegroundView = self;
 
 
-	self.mshView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
-	[(MSHBarView*)self.mshView setBarSpacing:4];
-	[(MSHBarView*)self.mshView  setBarCornerRadius:2];
+	self.mshFView = [[MSHFBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	[(MSHFBarView*)self.mshFView setBarSpacing:4];
+	[(MSHFBarView*)self.mshFView  setBarCornerRadius:2];
 
-	self.mshView.autoHide = YES;
-	self.mshView.displayLink.preferredFramesPerSecond = 24;
-	self.mshView.numberOfPoints = 6;
-	self.mshView.waveOffset = 26;
-	self.mshView.gain = 10;
-	self.mshView.limiter = 8;
-	self.mshView.sensitivity = 0.5*sensi;
-	self.mshView.audioProcessing.fft = YES;
-	self.mshView.disableBatterySaver = NO;
-	[self.mshView updateWaveColor:[UIColor whiteColor] subwaveColor:[UIColor whiteColor]];
+	self.mshFView.autoHide = YES;
+	self.mshFView.displayLink.preferredFramesPerSecond = 24;
+	self.mshFView.numberOfPoints = 6;
+	self.mshFView.waveOffset = 26;
+	self.mshFView.gain = 10;
+	self.mshFView.limiter = 8;
+	self.mshFView.sensitivity = 0.5*sensi;
+	self.mshFView.audioProcessing.fft = YES;
+	self.mshFView.disableBatterySaver = NO;
+	[self.mshFView updateWaveColor:[UIColor whiteColor] subwaveColor:[UIColor whiteColor]];
 
 
-	self.mshView.clipsToBounds=YES;
+	self.mshFView.clipsToBounds=YES;
 
 	// lazy hack to fix the weird offset bug where bars can just yeet themselves
 	//	entirely out of their container at random(?)
-	self.mshShitHackView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
-	[(MSHBarView*)self.mshShitHackView setBarSpacing:4];
-	[(MSHBarView*)self.mshShitHackView  setBarCornerRadius:2];
+	self.mshShitHackView = [[MSHFBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	[(MSHFBarView*)self.mshShitHackView setBarSpacing:4];
+	[(MSHFBarView*)self.mshShitHackView  setBarCornerRadius:2];
 
 	self.mshShitHackView.autoHide = YES;
 	self.mshShitHackView.displayLink.preferredFramesPerSecond = 24;
@@ -135,9 +135,9 @@ void showLeftStatusBarRegions()
 	self.mshShitHackView.clipsToBounds=YES;
 
 
-	self.mshBackView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
-	[(MSHBarView*)self.mshBackView setBarSpacing:4];
-	[(MSHBarView*)self.mshBackView  setBarCornerRadius:2];
+	self.mshBackView = [[MSHFBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	[(MSHFBarView*)self.mshBackView setBarSpacing:4];
+	[(MSHFBarView*)self.mshBackView  setBarCornerRadius:2];
 
 	self.mshBackView.autoHide = YES;
 	self.mshBackView.displayLink.preferredFramesPerSecond = 24;
@@ -152,9 +152,9 @@ void showLeftStatusBarRegions()
 
 	self.mshBackView.clipsToBounds=YES;
 
-	self.mshBackTwoView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
-	[(MSHBarView*)self.mshBackTwoView setBarSpacing:4];
-	[(MSHBarView*)self.mshBackTwoView  setBarCornerRadius:2];
+	self.mshBackTwoView = [[MSHFBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	[(MSHFBarView*)self.mshBackTwoView setBarSpacing:4];
+	[(MSHFBarView*)self.mshBackTwoView  setBarCornerRadius:2];
 
 	self.mshBackTwoView.autoHide = YES;
 	self.mshBackTwoView.displayLink.preferredFramesPerSecond = 24;
@@ -171,12 +171,12 @@ void showLeftStatusBarRegions()
 
 	[globalFrontBarViews addObject:self.mshBackView];
 	[globalBackBarViews addObject:self.mshBackTwoView];
-	[globalFGBarViews addObject:self.mshView];
+	[globalFGBarViews addObject:self.mshFView];
 	[self addSubview:self.mshBackTwoView];
 	[self addSubview:self.mshBackView];
-	[self addSubview:self.mshView];
+	[self addSubview:self.mshFView];
 	[self addSubview:self.mshShitHackView];
-	[self.mshView start];
+	[self.mshFView start];
 	[self.mshBackView start];
 	[self.mshBackTwoView start];
 	[self.mshShitHackView start];
@@ -186,9 +186,9 @@ void showLeftStatusBarRegions()
 -(void)dealloc 
 {
 	[globalFrontBarViews removeObject:self.mshBackView];
-	[globalFGBarViews removeObject:self.mshView];
+	[globalFGBarViews removeObject:self.mshFView];
 	[globalBackBarViews removeObject:self.mshBackTwoView];
-	[self.mshView stop];
+	[self.mshFView stop];
 	[self.mshBackView stop];
 	[self.mshBackTwoView stop];
 	[self.mshShitHackView stop];
@@ -198,7 +198,7 @@ void showLeftStatusBarRegions()
 
 %end
 
-%hook MSHBarView
+%hook MSHFBarView
 -(void)setAlpha:(CGFloat)alpha 
 {
 	%orig(alpha);
@@ -360,15 +360,15 @@ static void preferencesChanged()
 
     sensi = [prefs objectForKey:@"sensitivity"] ? [[prefs valueForKey:@"sensitivity"] floatValue] : 3;
 	sensi = sensi/3;
-	for (MSHBarView *bar in globalFrontBarViews)
+	for (MSHFBarView *bar in globalFrontBarViews)
 	{
 		bar.sensitivity = .75*sensi;
 	}
-	for (MSHBarView *bar in globalBackBarViews)
+	for (MSHFBarView *bar in globalBackBarViews)
 	{
 		bar.sensitivity = sensi;
 	}
-	for (MSHBarView *bar in globalFGBarViews)
+	for (MSHFBarView *bar in globalFGBarViews)
 	{
 		bar.sensitivity = .65*sensi;
 	}
