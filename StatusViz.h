@@ -1,8 +1,5 @@
 
-#define MSHBarView MSHBarView
-#include <Foundation/Foundation.h>
-#include <UIKit/UIKit.h>
-#include "MSHBarView.h"
+#import <MitsuhaForever/MSHFBarView.h>
 #define kIdentifier @"me.kritanta.statusvizprefs"
 #define kSettingsChangedNotification (CFStringRef)@"me.kritanta.statusvizprefs/Prefs"
 #define kSettingsPath @"/var/mobile/Library/Preferences/me.kritanta.statusvizprefs.plist"
@@ -13,10 +10,10 @@
 @end
 @interface _UIStatusBarForegroundView : UIView 
 @property (nonatomic, assign) BOOL kek;
-@property (nonatomic, retain) MSHBarView *mshView;
-@property (nonatomic, retain) MSHBarView *mshShitHackView;
-@property (nonatomic, retain) MSHBarView *mshBackView;
-@property (nonatomic, retain) MSHBarView *mshBackTwoView;
+@property (nonatomic, retain) MSHFBarView *mshFView;
+@property (nonatomic, retain) MSHFBarView *mshShitHackView;
+@property (nonatomic, retain) MSHFBarView *mshBackView;
+@property (nonatomic, retain) MSHFBarView *mshBackTwoView;
 @end
 
 // _UIStatusBar 
