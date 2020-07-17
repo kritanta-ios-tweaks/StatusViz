@@ -22,5 +22,3 @@ statusvizprefs:
     type: prefs
     objc_files:
         - "*.m"
-    frameworks:
-        - Preferences

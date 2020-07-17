@@ -9,101 +9,111 @@
 
 #import "KRTwitterCell.h"
 #import <Preferences/PSSpecifier.h>
-#import <UIKit/UIImage+Private.h>
-#import <Foundation/Foundation.h>
-
-@interface KRLinkCell ()
-
-- (BOOL)shouldShowAvatar;
-
-@end
-
-@interface KRTwitterCell () {
-	NSString *_user;
-}
-
-@end
 
 @implementation KRTwitterCell
 
-+ (NSString *)_urlForUsername:(NSString *)user {
-
-	user = [user stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-
-	if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"aphelion://"]]) {
-		return [@"aphelion://profile/" stringByAppendingString:user];
-	} else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot://"]]) {
-		return [@"tweetbot:///user_profile/" stringByAppendingString:user];
-	} else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific://"]]) {
-		return [@"twitterrific:///profile?screen_name=" stringByAppendingString:user];
-	} else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings://"]]) {
-		return [@"tweetings:///user?screen_name=" stringByAppendingString:user];
-	} else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter://"]]) {
-		return [@"twitter://user?screen_name=" stringByAppendingString:user];
-	} else {
-		return [@"https://mobile.twitter.com/" stringByAppendingString:user];
-	}
-}
-
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier specifier:(PSSpecifier *)specifier 
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier specifier:(PSSpecifier *)specifier
 {
-	self = [super initWithStyle:style reuseIdentifier:reuseIdentifier specifier:specifier];
+    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier specifier:specifier];
 
-	if (self) {
-		UIImageView *imageView = (UIImageView *)self.accessoryView;
-		imageView.image = nil;//[UIImage imageNamed:@"twitter" inBundle:globalBundle];
-		[imageView sizeToFit];
+    if (self) {
 
-		_user = [specifier.properties[@"accountName"] copy];
-		NSAssert(_user, @"User name not provided");
+        self.selectionStyle = UITableViewCellSelectionStyleBlue;
+        self.accessoryView = [[UIImageView alloc] initWithFrame:CGRectMake( 0, 0, 38, 38)];
 
-		specifier.properties[@"url"] = [self.class _urlForUsername:_user];
+        self.detailTextLabel.numberOfLines = 1;
+        self.detailTextLabel.textColor = [UIColor grayColor];
 
-		self.detailTextLabel.text = [@"@" stringByAppendingString:_user];
+        self.textLabel.textColor = [UIColor blackColor];
+        
+        if (@available(iOS 13, *)) {
+            self.tintColor = [UIColor labelColor];
+        }
+        else {
+            self.tintColor = [UIColor blackColor];
+        }
 
-		[self setCellEnabled:YES];
+        CGFloat const size = 29.f;
 
-		[self loadAvatarIfNeeded];
-	}
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(size, size), NO, [UIScreen mainScreen].scale);
+        specifier.properties[@"iconImage"] = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
 
-	return self;
-}
+        _avatarView = [[UIView alloc] initWithFrame:self.imageView.bounds];
+        _avatarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _avatarView.backgroundColor = [UIColor colorWithWhite:0.9f alpha:1];
+        _avatarView.userInteractionEnabled = NO;
+        _avatarView.clipsToBounds = YES;
+        _avatarView.layer.cornerRadius = size / 2;
+        _avatarView.layer.borderWidth = 2;
 
-- (void)setSelected:(BOOL)arg1 animated:(BOOL)arg2
-{
-	[super setSelected:arg1 animated:arg2];
+        if (@available(iOS 13, *)) {
+            _avatarView.layer.borderColor = [[UIColor tertiaryLabelColor] CGColor];
+        }
+        else {
+            _avatarView.layer.borderColor = [[UIColor colorWithWhite:1 alpha:0.3] CGColor];
+        }
+        
+        [self.imageView addSubview:_avatarView];
 
-	if (!arg1) return;
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[self.class _urlForUsername:_user]] options:@{} completionHandler:nil];
+        _avatarImageView = [[UIImageView alloc] initWithFrame:_avatarView.bounds];
+        _avatarImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _avatarImageView.alpha = 0;
+        _avatarImageView.layer.minificationFilter = kCAFilterTrilinear;
+        [_avatarView addSubview:_avatarImageView];
+
+        _user = [specifier.properties[@"accountName"] copy];
+        NSAssert(_user, @"User name not provided");
+
+        specifier.properties[@"url"] = [self.class _urlForUsername:_user];
+
+        self.detailTextLabel.text = _user;
+
+        if (!_user) {
+            return self;
+        }
+
+         self.avatarImage = [UIImage imageNamed:[NSString stringWithFormat:@"/Library/PreferenceBundles/statusvizprefs.bundle/_kritanta.png"]];
+    }
+
+    return self;
 }
 
 #pragma mark - Avatar
 
-- (BOOL)shouldShowAvatar {
-	// HBLinkTableCell doesn’t want avatars by default, but we do. override its check method so that
-	// if showAvatar is unset, we return YES
-	return YES;
+- (void)setAvatarImage:(UIImage *)avatarImage
+{
+    _avatarImageView.image = avatarImage;
+
+    if (_avatarImageView.alpha == 0)
+    {
+        [UIView animateWithDuration:0.15
+            animations:^{
+                _avatarImageView.alpha = 1;
+            }
+        ];
+    }
 }
 
-- (void)loadAvatarIfNeeded {
-	if (!_user) {
-		return;
-	}
++ (NSURL *)_urlForUsername:(NSString *)user {
 
-	if (self.avatarImage) {
-		return;
-	}
-	// TODO: fix this
-	//self.avatarImage = [UIImage imageNamed:[NSString stringWithFormat:@"/Library/PreferenceBundles/SignePrefs.bundle/%@.png", _user]];
-	
-	dispatch_async(dispatch_get_global_queue(0,0), ^{
-		NSData * data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@/profile_image?size=original", _user]]];
-		if ( data == nil )
-			return;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			self.avatarImage = [UIImage imageWithData: data];
-		});
-	});
+/*    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"aphelion://"]]) {
+        return [NSString stringWithFormat: @"aphelion://profile/%@", user]; // Easter egg by hbkirb
+    } else*/
+     
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot://"]]) {
+        return [NSURL URLWithString: [@"tweetbot:///user_profile/" stringByAppendingString:user]];
+    } else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific://"]]) {
+        return [NSURL URLWithString: [@"twitterrific:///profile?screen_name=" stringByAppendingString:user]];
+    } else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings://"]]) {
+        return [NSURL URLWithString: [@"tweetings:///user?screen_name=" stringByAppendingString:user]];
+    } else {
+        return [NSURL URLWithString: [@"https://mobile.twitter.com/" stringByAppendingString:user]];
+    }
 }
 
+- (void)setSelected:(BOOL)arg1 animated:(BOOL)arg2
+{
+    if (arg1) [[UIApplication sharedApplication] openURL:[self.class _urlForUsername:_user] options:@{} completionHandler:nil];
+}
 @end

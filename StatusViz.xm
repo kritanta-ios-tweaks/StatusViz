@@ -21,7 +21,6 @@ static NSMutableArray *globalFrontBarViews;
 static NSMutableArray *globalBackBarViews;
 static NSMutableArray *globalFGBarViews;
 static CGFloat sensi = 3;
-NSDictionary *prefs = nil;
 
 
 static MPUNowPlayingController *globalMPUNowPlaying;
@@ -313,12 +312,27 @@ void showLeftStatusBarRegions()
 
 
 
+%hook _UIStatusBar 
 
-static void *observer = NULL;
-
-static void reloadPrefs() 
+-(NSDictionary *)regions 
 {
-    if ([NSHomeDirectory() isEqualToString:@"/var/mobile"]) 
+	NSDictionary *regions = %orig;
+	if (![globalLeftAreas containsObject:self]) 
+	{
+		[globalLeftAreas addObject:regions[@"leading"]];
+	}
+	return %orig;
+}
+
+%end
+
+static void preferencesChanged() 
+{
+    CFPreferencesAppSynchronize((CFStringRef)kIdentifier);
+
+	NSDictionary *prefs;
+
+	if ([NSHomeDirectory() isEqualToString:@"/var/mobile"]) 
     {
         CFArrayRef keyList = CFPreferencesCopyKeyList((CFStringRef)kIdentifier, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 
@@ -337,26 +351,6 @@ static void reloadPrefs()
     {
         prefs = [NSDictionary dictionaryWithContentsOfFile:kSettingsPath];
     }
-}
-
-%hook _UIStatusBar 
-
--(NSDictionary *)regions 
-{
-	NSDictionary *regions = %orig;
-	if (![globalLeftAreas containsObject:self]) 
-	{
-		[globalLeftAreas addObject:regions[@"leading"]];
-	}
-	return %orig;
-}
-
-%end
-
-static void preferencesChanged() 
-{
-    CFPreferencesAppSynchronize((CFStringRef)kIdentifier);
-    reloadPrefs();
 
     sensi = [prefs objectForKey:@"sensitivity"] ? [[prefs valueForKey:@"sensitivity"] floatValue] : 3;
 	sensi = sensi/3;
@@ -373,8 +367,10 @@ static void preferencesChanged()
 		bar.sensitivity = .65*sensi;
 	}
 }
+
 @interface  _UIStatusBarImageView : UIView
 @end
+
 %hook _UIStatusBarImageView 
 
 -(BOOL)isHidden
@@ -387,6 +383,7 @@ static void preferencesChanged()
 }
 %end
 
+%group ASSWatchdog
 #import <arpa/inet.h>
 #import <spawn.h>
 #define ASSPort 43333
@@ -452,12 +449,15 @@ int connfd;
 }
 
 %end
+
+%end
+
 %ctor {
     preferencesChanged();
 
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(),
-        &observer,
+        NULL,
         (CFNotificationCallback)preferencesChanged,
         (CFStringRef)@"me.kritanta.statusviz/Prefs",
         NULL,
@@ -465,6 +465,12 @@ int connfd;
     );
 
 	NSLog(@"StatusViz: dab");
+
+	bool const mitsuhaForeverInstalled = [[NSFileManager defaultManager] fileExistsAtPath: @"/Library/MobileSubstrate/DynamicLibraries/ASSWatchdog.dylib"];
+
+	if (!mitsuhaForeverInstalled) %init(ASSWatchdog);
+
+	%init;
 
 	globalTimes = [NSMutableArray array];
 	globalFrontBarViews = [NSMutableArray array];

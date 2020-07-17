@@ -1,6 +1,4 @@
 
-#define MSHFBarView MSHFBarView
-#include <UIKit/UIKit.h>
 #import <MitsuhaForever/MSHFBarView.h>
 #define kIdentifier @"me.kritanta.statusvizprefs"
 #define kSettingsChangedNotification (CFStringRef)@"me.kritanta.statusvizprefs/Prefs"
