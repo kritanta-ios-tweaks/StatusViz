@@ -22,4 +22,4 @@ LIBS="-lmitsuha -lCozy"
 # Frameworks
 # CoreFoundation, Foundation, UIKit, CoreGraphics, and QuartzCore are included by default
 FRAMEWORKS=""
-SUBPROJECTS="statusvizprefs"
+SUBPROJECTS="StatusVizPrefs"
