@@ -7,6 +7,8 @@
 //	All of the coding practices used here are bad and you should not use them.
 // 	GLOBALS ARE BAD, I'M JUST INCREDIBLY LAZY
 //	3 am tweak request
+
+// 2021 update: yep code still shit
 //
 
 #include "StatusViz.h"
@@ -46,6 +48,7 @@ void updateBackwaves()
 		[bar updateWaveColor:[b getColor] subwaveColor:[UIColor grayColor]];
 	}
 }
+
 @interface _UIStatusBarRegion : NSObject 
 @property (nonatomic, retain) NSMutableIndexSet *disablingTokens;
 @end
@@ -87,17 +90,17 @@ void showLeftStatusBarRegions()
 %property (nonatomic, retain) MSHBarView *mshBackView;
 %property (nonatomic, retain) MSHBarView *mshBackTwoView;
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
+- (void)layoutSubviews
 {
-	%orig(newSuperview);
-	if (((Its3AMAndIAmCravingTacoBell*)(newSuperview)).mode!=0) return;
-	if (((Its3AMAndIAmCravingTacoBell*)(newSuperview)).superview.frame.origin.x+((Its3AMAndIAmCravingTacoBell*)(newSuperview)).superview.frame.origin.y!=0)return;
-	if([((Its3AMAndIAmCravingTacoBell*)(newSuperview)).superview.superview.description containsString:@"CCUI"])return;
-	if (self.kek)return;
+	%orig();
+	if (((Its3AMAndIAmCravingTacoBell*)self.superview).mode!=0) return;
+	if (((Its3AMAndIAmCravingTacoBell*)self.superview).superview.frame.origin.x+((Its3AMAndIAmCravingTacoBell*)(self.superview)).superview.frame.origin.y!=0)return;
+	if([((Its3AMAndIAmCravingTacoBell*)self.superview).superview.superview.description containsString:@"CCUI"])return;
+	if (self.mshView)return;
 	global_UIStatusBarForegroundView = self;
 
-
-	self.mshView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	CGRect barLocation = (self.frame.size.height < 30) ? CGRectMake(1,-10, 50, 30) : CGRectMake(20,0,50,30);
+	self.mshView = [[MSHBarView alloc] initWithFrame:barLocation];
 	[(MSHBarView*)self.mshView setBarSpacing:4];
 	[(MSHBarView*)self.mshView  setBarCornerRadius:2];
 
@@ -117,7 +120,7 @@ void showLeftStatusBarRegions()
 
 	// lazy hack to fix the weird offset bug where bars can just yeet themselves
 	//	entirely out of their container at random(?)
-	self.mshShitHackView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	self.mshShitHackView = [[MSHBarView alloc] initWithFrame:barLocation];
 	[(MSHBarView*)self.mshShitHackView setBarSpacing:4];
 	[(MSHBarView*)self.mshShitHackView  setBarCornerRadius:2];
 
@@ -135,7 +138,7 @@ void showLeftStatusBarRegions()
 	self.mshShitHackView.clipsToBounds=YES;
 
 
-	self.mshBackView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	self.mshBackView = [[MSHBarView alloc] initWithFrame:barLocation];
 	[(MSHBarView*)self.mshBackView setBarSpacing:4];
 	[(MSHBarView*)self.mshBackView  setBarCornerRadius:2];
 
@@ -152,7 +155,7 @@ void showLeftStatusBarRegions()
 
 	self.mshBackView.clipsToBounds=YES;
 
-	self.mshBackTwoView = [[MSHBarView alloc] initWithFrame:CGRectMake(20,0,50,30)];
+	self.mshBackTwoView = [[MSHBarView alloc] initWithFrame:barLocation];
 	[(MSHBarView*)self.mshBackTwoView setBarSpacing:4];
 	[(MSHBarView*)self.mshBackTwoView  setBarCornerRadius:2];
 
@@ -180,7 +183,7 @@ void showLeftStatusBarRegions()
 	[self.mshBackView start];
 	[self.mshBackTwoView start];
 	[self.mshShitHackView start];
-	self.kek=YES;
+	NSLog(@"[Ass] Injected views into bar");
 }
 
 -(void)dealloc 
@@ -258,6 +261,7 @@ void showLeftStatusBarRegions()
 -(void)_nowPlayingInfoChanged 
 {
     %orig;
+	NSLog(@"[Ass] NowPlayingInfoChanged");
 	dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.5);
 	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 		updateBackwaves();
@@ -268,7 +272,7 @@ void showLeftStatusBarRegions()
 
 -(void)_mediaRemoteNowPlayingInfoDidChange:(id)arg1 {
     %orig(arg1);
-
+	NSLog(@"[Ass] NowPlayingInfoChanged");
 	dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.5);
 	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 		updateBackwaves();
@@ -398,7 +402,7 @@ int connfd;
 -(id)init {
     id orig = %orig;
     NSLog(@"[ASSWatchdog] checking for ASS");
-    bool assPresent = [[NSFileManager defaultManager] fileExistsAtPath: @"/Library/MobileSubstrate/DynamicLibraries/ThickASS.dylib"];
+    bool assPresent = [[NSFileManager defaultManager] fileExistsAtPath: @"/Library/MobileSubstrate/DynamicLibraries/AudioSnapshotServer.dylib"];
     if (assPresent) {
         NSLog(@"[ASSWatchdog] ASS found... checking if msd is hooked");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

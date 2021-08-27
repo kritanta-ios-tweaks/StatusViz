@@ -8,9 +8,9 @@
 			<key>cellClass</key>
 			<string>KRTwitterCell</string>
 			<key>label</key>
-			<string>Kritanta</string>
-			<key>accountName</key>
 			<string>_kritanta</string>
+			<key>accountName</key>
+			<string>arm64e</string>
 		</dict>
 		<dict>
 			<key>cellClass</key>
@@ -44,9 +44,9 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>StatusViz 0.1.1</string>
+			<string>StatusViz 1.0.0-alpha0</string>
 			<key>footerText</key>
-			<string>In early stages and WILL have bugs! Report them to me!</string>
+			<string>Built for iOS 14. Early Internal build, Patreon Alpha Test Release. Report bugs in discord server in #statusviz</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>

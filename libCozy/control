@@ -1,0 +1,8 @@
+Package: me.kritanta.libcozy
+Name: libCozy
+Version: 0.1.0
+Architecture: iphoneos-arm
+Description: Somewhat Intelegent Artwork Color Analyzer
+Maintainer: Kritanta
+Author: Kritanta
+Section: System

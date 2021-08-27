@@ -25,6 +25,9 @@
 @property (nonatomic, assign) NSInteger mode;
 @end
 
+@interface _UIStatusBar : UIView
++(NSString *)_visualProviderClassName;
+@end
 @interface  MPUNowPlayingController : NSObject
 - (void)startUpdating;
 - (id)currentNowPlayingArtwork;

@@ -94,8 +94,8 @@
 		return;
 	}
 	// TODO: fix this
-	//self.avatarImage = [UIImage imageNamed:[NSString stringWithFormat:@"/Library/PreferenceBundles/SignePrefs.bundle/%@.png", _user]];
-	
+	self.avatarImage = [UIImage imageNamed:[NSString stringWithFormat:@"/Library/PreferenceBundles/StatusVizPrefs.bundle/%@.png", _user]];
+	/*
 	dispatch_async(dispatch_get_global_queue(0,0), ^{
 		NSData * data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@/profile_image?size=original", _user]]];
 		if ( data == nil )
@@ -103,7 +103,8 @@
 		dispatch_async(dispatch_get_main_queue(), ^{
 			self.avatarImage = [UIImage imageWithData: data];
 		});
-	});
+		[data release];
+	});*/
 }
 
 @end
